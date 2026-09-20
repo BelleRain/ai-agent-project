@@ -1,0 +1,117 @@
+```gitignore
+# =========================
+# Python
+# =========================
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Python packaging
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# =========================
+# Environment & Secrets
+# =========================
+.env
+.env.*
+!.env.example
+
+# API keys / secrets
+*.pem
+*.key
+secrets/
+credentials/
+
+# =========================
+# IDE
+# =========================
+.idea/
+*.iml
+
+.vscode/
+!.vscode/settings.json
+
+# =========================
+# macOS
+# =========================
+.DS_Store
+
+# =========================
+# Testing
+# =========================
+.pytest_cache/
+.coverage
+htmlcov/
+
+# =========================
+# Type checking / linting
+# =========================
+.mypy_cache/
+.ruff_cache/
+
+# =========================
+# Jupyter
+# =========================
+.ipynb_checkpoints/
+
+# =========================
+# Logs
+# =========================
+*.log
+logs/
+
+# =========================
+# Local data
+# =========================
+data/
+tmp/
+cache/
+
+# =========================
+# Vector databases
+# =========================
+chroma/
+chromadb/
+.vectordb/
+
+# =========================
+# Build / runtime
+# =========================
+*.pid
+*.sqlite
+*.db
+```
+| 配置              | 含义                           |
+| --------------- | ---------------------------- |
+| `__pycache__/`  | ❌ 不提交 Python 缓存目录            |
+| `*.py[cod]`     | ❌ 不提交 `.pyc` 等编译缓存文件         |
+| `.venv/`        | ❌ 不提交 Python 虚拟环境            |
+| `venv/`         | ❌ 不提交虚拟环境                    |
+| `dist/`         | ❌ 不提交构建产物                    |
+| `build/`        | ❌ 不提交构建产物                    |
+| `.env`          | ❌ 不提交真实环境配置/API Key          |
+| `.env.*`        | ❌ 不提交其他 `.env.xxx` 文件        |
+| `!.env.example` | ✅ **但是 `.env.example` 允许提交** |
+| `*.pem`         | ❌ 不提交证书/私钥文件                 |
+| `*.key`         | ❌ 不提交密钥文件                    |
+| `.idea/`        | ❌ 不提交 IntelliJ IDEA 配置       |
+| `*.iml`         | ❌ 不提交 IDEA 模块文件              |
+| `.vscode/`      | ❌ 默认不提交 VS Code 配置           |
+| `.DS_Store`     | ❌ 不提交 macOS 系统文件             |
+| `*.log`         | ❌ 不提交日志文件                    |
+| `logs/`         | ❌ 不提交日志目录                    |
+| `data/`         | ❌ 不提交本地数据目录                  |
+| `tmp/`          | ❌ 不提交临时文件目录                  |
+| `cache/`        | ❌ 不提交缓存目录                    |
+| `chroma/`       | ❌ 不提交 Chroma 本地数据库           |
+| `*.sqlite`      | ❌ 不提交 SQLite 数据库             |
+| `*.db`          | ❌ 不提交数据库文件                   |
