@@ -36,7 +36,7 @@ client = OpenAI(
 
 class ErrorAnalysis(BaseModel):
     error_type: str
-    possible_cause: list[str]
+    possible_causes: list[str]
     suggestions: list[str]
 
 
