@@ -23,7 +23,7 @@ Pydantic 校验
 import argparse
 
 from log_analyzer.log_analyzer import analyze_log
-from prompt_eval.prompt_eval import validate_analysis,score_analysis
+from log_analyzer.prompt_eval import validate_analysis,score_analysis
 
 def main():
     parser = argparse.ArgumentParser(
