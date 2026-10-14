@@ -24,16 +24,28 @@ Structured Outputs：
 注意：结构正确 ≠ 内容正确
 
 """
+
+# 由于接口不支持json_schema,所以本次代码使用的是 json_object 方式
+
 from openai import OpenAI
 
 from agent.config import settings
-from pydantic import BaseModel
+from pydantic import BaseModel, ValidationError
 import json
+from log_analyzer.prompt_eval import validate_analysis
+from typing import Literal
 
+
+
+# Prompt 是软约束，Schema 是结构层面的硬约束。
+# Literal["low", "medium", "high"] 表示：
+# confidence 只能是这三个字符串中的一个，不能随意填写其他字符串。
 class ErrorAnalysis(BaseModel):
     error_type: str
     possible_causes: list[str]
     suggestions: list[str]
+    #confidence: str
+    confidence: Literal["low", "medium", "high"]
 
 client = OpenAI(
     api_key=settings.api_key,
@@ -52,8 +64,16 @@ USER_PROMPT_TEMPLATE = """
 {{
   "error_type": "简洁的错误类型",
   "possible_causes": ["至少 2 条可能原因"],
-  "suggestions": ["至少 2 条解决建议"]
+  "suggestions": ["至少 2 条解决建议"],
+  "confidence": "low、medium 或 high"
 }}
+
+confidence 表示你对本次错误分析结论的置信程度：
+- low：日志证据不足，无法明确判断原因
+- medium：有一定证据，但仍存在多种可能
+- high：日志证据明确，结论有较强依据
+
+confidence 只能返回 low、medium、high 这三个值之一。
 
 要求：
 1. 只返回 JSON
@@ -76,7 +96,7 @@ def analyze_log(log_text: str) -> ErrorAnalysis:
             },
             {
                 "role": "user",
-                "content": USER_PROMPT_TEMPLATE,
+                "content": USER_PROMPT_TEMPLATE.format(log_text=log_text),
             },
         ],
         response_format={'type': 'json_object'}, # 指定返回JSON格式，确保输出结构化数据
@@ -84,9 +104,23 @@ def analyze_log(log_text: str) -> ErrorAnalysis:
     )
 
     content = response.choices[0].message.content
-    data = json.loads(content)
-    print("api返回结果:",data)
-    result = ErrorAnalysis.model_validate(data)
+    if not content or not content.strip():
+            raise ValueError("模型返回内容为空")
+    try:
+        data = json.loads(content)
+        # print("api返回结果:", data)
+    except json.JSONDecodeError as exc:
+        raise ValueError("模型返回的不是合法 JSON") from exc
+    try:
+        return ErrorAnalysis.model_validate(data)
+    except ValidationError as exc:
+        raise ValueError("模型返回的数据不符合要求") from exc
+
+
+
+if __name__ == "__main__":
+    log = "HikariPool-1 - Exception during pool initialization"
+    result = analyze_log(log)
     print("\n错误类型", result.error_type)
     print("\n可能原因:")
     for cause in result.possible_causes:
@@ -94,12 +128,11 @@ def analyze_log(log_text: str) -> ErrorAnalysis:
     print("\n解决建议：")
     for suggestion in result.suggestions:
         print("-", suggestion)
+    print("\n置信度：", result.confidence)
+    print("\n========warnings========")
+    warnings = validate_analysis(result)
+    print(warnings)
 
-
-
-if __name__ == "__main__":
-    log_text = "HikariPool-1 - Exception during pool initialization"
-    analyze_log(log_text)
 
 
 
