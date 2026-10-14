@@ -32,7 +32,6 @@ from openai import OpenAI
 from agent.config import settings
 from pydantic import BaseModel, ValidationError
 import json
-from log_analyzer.prompt_eval import validate_analysis
 from typing import Literal
 
 
@@ -116,6 +115,16 @@ def analyze_log(log_text: str) -> ErrorAnalysis:
     except ValidationError as exc:
         raise ValueError("模型返回的数据不符合要求") from exc
 
+# 结果校验函数
+def validate_analysis(result: ErrorAnalysis) -> List[str]:
+    warnings = []
+    if len(result.possible_causes) < 5:
+        warnings.append("可能原因少于5条")
+    if len(result.suggestions) < 5:
+        warnings.append("解决建议少于5条")
+    if len(result.error_type.strip()) < 5:
+        warnings.append("错误类型描述太短")
+    return warnings
 
 
 if __name__ == "__main__":
