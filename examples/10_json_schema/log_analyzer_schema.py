@@ -32,8 +32,7 @@ from openai import OpenAI
 from agent.config import settings
 from pydantic import BaseModel, ValidationError
 import json
-from typing import Literal
-
+from typing import Literal, List
 
 
 # Prompt 是软约束，Schema 是结构层面的硬约束。
