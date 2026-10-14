@@ -12,8 +12,8 @@ from openai import OpenAI
 from log_analyzer.log_analyzer import client
 
 client = OpenAI(
-    api_key=OPENAI_API_KEY,
-    base_url=OPENAI_BASE_URL,
+    api_key=settings.api_key,
+    base_url=settings.base_url,
 )
 
 class ErrorAnalysis(BaseModel):
@@ -48,7 +48,7 @@ PROMPT_SIMPLE = """
 
 def analyze_log(log_text: str, temperature: float) -> ErrorAnalysis:
     response = client.chat.completions.create(
-        model= MODEL_NAME,
+        model= settings.model_name,
         messages=[
             {
                 "role": "system",

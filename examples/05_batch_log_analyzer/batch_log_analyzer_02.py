@@ -15,8 +15,8 @@ class ErrorAnalysis(BaseModel):
     suggestions: List[str]
 
 client = OpenAI(
-    api_key=OPENAI_API_KEY,
-    base_url=OPENAI_BASE_URL,
+    api_key=settings.api_key,
+    base_url=settings.base_url,
 )
 
 PROMPT_TEMPLATE = """
@@ -51,7 +51,7 @@ PROMPT_TEMPLATE = """
 def analyze_log(log_text: str) -> ErrorAnalysis:
     prompt = PROMPT_TEMPLATE.format(log_text=log_text)
     response = client.chat.completions.create(
-        model=MODEL_NAME,
+        model=settings.model_name,
         messages=[
             {
                 "role": "system",

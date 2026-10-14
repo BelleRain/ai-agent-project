@@ -15,14 +15,14 @@ from openai import OpenAI
 from agent.config import *
 
 client = OpenAI(
-    api_key=OPENAI_API_KEY,
-    base_url=OPENAI_BASE_URL,
+    api_key=settings.api_key,
+    base_url=settings.base_url,
 )
 
 # messages 为字典，非 json数组
 #JSON 不是 Python 的数据类型，而是一种数据交换格式。
 response = client.chat.completions.create(
-    model = MODEL_NAME,
+    model = settings.model_name,
     messages=[
         {
             "role":"system",

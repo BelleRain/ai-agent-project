@@ -30,8 +30,8 @@ from pydantic import BaseModel,ValidationError
 from openai import OpenAI
 
 client = OpenAI(
-    api_key=OPENAI_API_KEY,
-    base_url=OPENAI_BASE_URL,
+    api_key=settings.api_key,
+    base_url=settings.base_url,
 )
 
 class ErrorAnalysis(BaseModel):
@@ -42,7 +42,7 @@ class ErrorAnalysis(BaseModel):
 
 def analyze_log(log_text: str) -> ErrorAnalysis:
     response = client.chat.completions.create(
-        model = MODEL_NAME,
+        model = settings.model_name,
         messages=[
             {
                 "role": "system",
