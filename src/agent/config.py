@@ -17,6 +17,15 @@ class Settings:
     api_key = os.getenv("OPENAI_API_KEY")
     base_url = os.getenv("OPENAI_BASE_URL")
     model_name = os.getenv("MODEL_NAME", "")
+
+    # 单次请求超时（秒）。SDK 默认 600 秒太放纵，一个卡住的请求能挂 10 分钟
+    timeout = float(os.getenv("TIMEOUT", "60"))
+
+    # 失败重试次数，总尝试次数 = max_retries + 1
+    # SDK 默认只有 2 次，累计退避约 0.5+1.0 = 1.5 秒 —— 跨不过 deepseek 的繁忙窗口
+    # 设为 5 则累计退避约 0.5+1+2+4+8 ≈ 15.5 秒
+    max_retries = int(os.getenv("MAX_RETRIES", "5"))
+
     # temperature = float(os.getenv("TEMPERATURE", "0"))
     # max_tokens = int(os.getenv("MAX_TOKENS", "800"))
 
