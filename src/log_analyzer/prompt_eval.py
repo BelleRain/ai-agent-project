@@ -30,6 +30,22 @@ def score_analysis(result: ErrorAnalysis) -> int:
         score -= 20
     return max(score,0)
 
+def validate_business_rules(result: ErrorAnalysis) -> list[str]:
+    warnings = []
+    if result.confidence == "low" and result.severity == "high":
+        warnings.append(
+            "严重程度较高，但模型置信度较低，需要人工确认"
+        )
+
+    if len(result.evidence) == 0:
+        warnings.append("缺少证据")
+
+    for item in result.evidence:
+        if not item.log_fragment.strip() :
+            warnings.append("存在空的日志证据")
+
+    return warnings
+
 
 
 

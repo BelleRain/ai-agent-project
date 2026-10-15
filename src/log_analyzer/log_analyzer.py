@@ -11,11 +11,13 @@ from log_analyzer.prompts import *
 client = OpenAI(
     api_key=settings.api_key,
     base_url=settings.base_url,
+    timeout=settings.timeout,
+    max_retries=settings.max_retries,
 )
 
 
 def analyze_log(log_text: str) -> ErrorAnalysis:
-    user_prompt = STRICT_USER_PROMPT_TEMPLATE.format(log_text=log_text)
+    user_prompt = USER_PROMPT_TEMPLATE.format(log_text=log_text)
     response = client.chat.completions.create(
         model = settings.model_name,
         messages=[
@@ -28,14 +30,17 @@ def analyze_log(log_text: str) -> ErrorAnalysis:
               "content": user_prompt
             },
         ],
+        response_format={"type": "json_object"}
         # temperature=settings.temperature,
         # max_tokens=settings.max_tokens,
     )
 
     content = response.choices[0].message.content
+    if not content or not content.strip():
+        raise ValueError("模型返回内容为空")
     try:
         data = json.loads(content)
-        return ErrorAnalysis(**data)
+        return ErrorAnalysis.model_validate(data)
     # 非法JSON
     except json.JSONDecodeError as exc:
         raise ValueError(
