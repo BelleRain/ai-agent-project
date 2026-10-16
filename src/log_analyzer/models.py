@@ -2,6 +2,17 @@
 from pydantic import BaseModel, Field
 from typing import Literal
 
+class LogAnalyzeRequest(BaseModel):
+    log_text: str = Field(
+        min_length=1,
+        max_length=1000,
+        description="待分析的错误日志"
+    )
+
+# 批量请求
+class BatchLogAnalyzeRequest(BaseModel):
+    logs: list[LogAnalyzeRequest]
+
 class Evidence(BaseModel):
     log_fragment: str = Field(
         description="用于支持判断的关键日志片段"
@@ -34,5 +45,18 @@ class ErrorAnalysis(BaseModel):
         description="支撑判断的证据"
     )
 
+# str | None：联合类型，表示字段可以是 str 类型或者 None，| 表示类型可以是多个候选类型之一。
+# = None 表示：如果没有给 message 传值，就默认使用 None。
+# 在 Pydantic 模型中，没有默认值的字段通常仍然是必填字段。
+
+# name: str 字符串类型，没有默认值。
+# name: str = "未知" 字符串类型，默认值为 "未知"。
+# name: str | None 字符串或 None，但没有默认值，字段必须提供。
+# name: str | None = None 字符串或 None，默认值为 None，字段可以不提供。
+
+class LogAnalyzeResponse(BaseModel):
+    success: bool
+    data: ErrorAnalysis | None = None
+    message: str | None = None
 
 
