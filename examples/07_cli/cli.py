@@ -21,9 +21,120 @@ Pydantic 校验
 
 
 import argparse
+import json
+from agent.config import settings
+from pydantic import BaseModel,ValidationError
+from openai import OpenAI
+from typing import List
 
-from log_analyzer.log_analyzer import analyze_log
-from log_analyzer.prompt_eval import validate_analysis,score_analysis
+
+
+client = OpenAI(
+    api_key=settings.api_key,
+    base_url=settings.base_url,
+    timeout=settings.timeout,
+    max_retries=settings.max_retries,
+)
+
+class ErrorAnalysis(BaseModel):
+    error_type: str
+    possible_causes: List[str]
+    suggestions: List[str]
+
+
+SYSTEM_PROMPT = """
+你是一名资深 Java 后端故障分析工程师。
+
+请根据错误日志进行保守分析：
+1. 只能基于日志内通推断
+2. 无法确认时，confidence输出low
+3. 必须给出支持判断的日志证据
+4. 不要编造日志中不存在的信息
+"""
+
+USER_PROMPT_TEMPLATE = """
+请分析下面的 Java 错误日志，并返回json格式的结构化结果：
+
+要求：
+1. error_type: 简洁描述错误类型
+2. severity 只能输出 low、medium、high
+3. confidence: 只能是 low、medium、high
+4. possible_causes: 至少返回 5 条可能原因
+5. suggestions: 至少返回 5 条执行建议
+6. evidence: 至少返回 1 个证据对象
+7. evidence 中包含两个字段 log_fragment、explanation
+8. evidence.log_fragment 必须引用输入日志中的原文或关键片段
+9. 无法确认时，必须降低 confidence
+10. 不要输出 Markdown
+11. 不要输出额外解释
+
+错误日志：
+{log_text}
+"""
+
+
+def analyze_log(log_text: str) -> ErrorAnalysis:
+    user_prompt = USER_PROMPT_TEMPLATE.format(log_text=log_text)
+    response = client.chat.completions.create(
+        model = settings.model_name,
+        messages=[
+            {
+                "role": "system",
+                "content": SYSTEM_PROMPT
+            },
+            {
+              "role":"user",
+              "content": user_prompt
+            },
+        ],
+        response_format={"type": "json_object"}
+        # temperature=settings.temperature,
+        # max_tokens=settings.max_tokens,
+    )
+
+    content = response.choices[0].message.content
+    if not content or not content.strip():
+        raise ValueError("模型返回内容为空")
+    try:
+        data = json.loads(content)
+        return ErrorAnalysis.model_validate(data)
+    # 非法JSON
+    except json.JSONDecodeError as exc:
+        raise ValueError(
+            f"模型返回的内容不是合法JSON ：{content}"
+        ) from exc
+    #字段异常
+    except ValidationError as exc:
+        raise ValueError(
+            f"模型返回字段不符合要求：{content}"
+        ) from exc
+
+
+def validate_analysis(result: ErrorAnalysis) -> List[str]:
+    warnings = []
+    if len(result.possible_causes) < 10:
+        warnings.append("可能原因少于10条")
+    if len(result.suggestions) < 10:
+        warnings.append("解决建议少于10条")
+    if len(result.error_type.strip()) < 10:
+        warnings.append("错误类型描述太短")
+    return warnings
+
+
+# 简单评分函数
+#将一些业务要求转换为可自动检查的规则
+def score_analysis(result: ErrorAnalysis) -> int:
+    score = 100
+    if len(result.possible_causes) < 10:
+        score -= 20
+    if len(result.suggestions) < 10:
+        score -=20
+    if len(result.error_type.strip()) < 10:
+        score -= 20
+    return max(score,0)
+
+
+
 
 def main():
     parser = argparse.ArgumentParser(
