@@ -1,9 +1,9 @@
 from pyexpat.errors import messages
 
 from fastapi import FastAPI, HTTPException
-from log_analyzer.log_analyzer import analyze_log
-from log_analyzer.models import LogAnalyzeRequest, LogAnalyzeResponse, BatchLogAnalyzeRequest
-from log_analyzer.prompt_eval import validate_analysis,validate_business_rules
+from app.services.log_service import analyze_log
+from app.models import LogAnalyzeRequest, LogAnalyzeResponse, BatchLogAnalyzeRequest
+from app.services.prompt_eval import validate_analysis,validate_business_rules
 
 
 app = FastAPI(

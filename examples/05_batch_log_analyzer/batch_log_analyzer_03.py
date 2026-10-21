@@ -1,7 +1,7 @@
 '''
 练习3 ：统计高频错误类型
 '''
-from agent.config import *
+from config import *
 import json
 from pydantic import BaseModel,ValidationError
 from openai import OpenAI

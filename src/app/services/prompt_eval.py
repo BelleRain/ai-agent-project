@@ -1,6 +1,6 @@
 
 from typing import List
-from log_analyzer.models import ErrorAnalysis
+from app.models import ErrorAnalysis
 
 # 注意：Pydantic 解决的是 数据结构是否符合要求
 # validate_analysis() 解决的是：

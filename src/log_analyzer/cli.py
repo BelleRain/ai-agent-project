@@ -1,13 +1,12 @@
 
-# log_analyzer.py ：调用模型
+# log_service.py ：调用模型
 # prompt_eval.py ：结果校验和评分
 # cli.py ：用户交付
 # PYTHONPATH=src python -m log_analyzer.cli --log "HikariPool-1 - Exception during pool initialization"
 
 import argparse
 
-from log_analyzer.log_analyzer import analyze_log
-from log_analyzer.prompt_eval import *
+from app.services.log_service import *
 
 def main():
     parser = argparse.ArgumentParser(

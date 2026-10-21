@@ -4,12 +4,11 @@
 """
 
 import json
-from typing import List
 from pydantic import BaseModel
-from agent.config import *
+from config import *
 from openai import OpenAI
 
-from log_analyzer.log_analyzer import client
+from app.services.log_service import client
 
 client = OpenAI(
     api_key=settings.api_key,

@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 import os
 
 #config.py 所在目录
-BASE_DIR = Path(__file__).resolve().parents[2]
+BASE_DIR = Path(__file__).resolve().parents[1]
 
 # #加载根目录下的 .env
 # # /：路径拼接运算符

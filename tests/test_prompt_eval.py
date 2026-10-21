@@ -1,6 +1,6 @@
 
-from log_analyzer.log_analyzer import analyze_log
-from log_analyzer.prompt_eval import *
+from app.services.log_service import analyze_log
+from app.services.prompt_eval import *
 
 def test_validate_analysis():
     result = analyze_log("HikariPool-1 - Exception during pool initialization")

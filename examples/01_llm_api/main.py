@@ -1,7 +1,7 @@
 
 from openai import OpenAI
 
-from agent.config import *
+from config import *
 
 client = OpenAI(
     api_key=settings.api_key,

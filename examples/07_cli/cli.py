@@ -15,14 +15,14 @@ Pydantic 校验
 终端输出
 """
 
-# log_analyzer.py ：调用模型
+# log_service.py ：调用模型
 # prompt_eval.py ：结果校验和评分
 # cli.py ：用户交付
 
 
 import argparse
 import json
-from agent.config import settings
+from config import settings
 from pydantic import BaseModel,ValidationError
 from openai import OpenAI
 from typing import List

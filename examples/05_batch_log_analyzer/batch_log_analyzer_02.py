@@ -1,7 +1,7 @@
 '''
 练习2 ：增加 severity 字段
 '''
-from agent.config import *
+from config import *
 import json
 from pydantic import BaseModel,ValidationError
 from openai import OpenAI

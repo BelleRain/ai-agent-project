@@ -29,7 +29,7 @@ Structured Outputs：
 
 from openai import OpenAI
 
-from agent.config import settings
+from config import settings
 from pydantic import BaseModel, ValidationError
 import json
 from typing import Literal, List

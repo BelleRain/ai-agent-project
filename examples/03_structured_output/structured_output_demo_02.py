@@ -17,7 +17,7 @@ import json
 
 from openai import OpenAI
 from pydantic import BaseModel
-from agent.config import *
+from config import *
 
 client = OpenAI(
     api_key=settings.api_key,

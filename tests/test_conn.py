@@ -4,7 +4,7 @@ import sys
 # 直接 `python tests/test_conn.py` 也能跑：把 src 加进模块搜索路径
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "src"))
 
-from agent.config import settings
+from config import settings
 from openai import OpenAI
 
 

@@ -6,7 +6,7 @@
 4.AI 应用需要最基本的评估数据
 """
 
-from agent.config import *
+from config import *
 import json
 from pydantic import BaseModel,ValidationError
 from openai import OpenAI

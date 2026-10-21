@@ -9,7 +9,7 @@
 核心理解：
 LLM 负责理解，Python 负责业务处理
 '''
-from agent.config import *
+from config import *
 import json
 from pydantic import BaseModel,ValidationError
 from openai import OpenAI

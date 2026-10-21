@@ -12,7 +12,7 @@ Structured Output：让模型返回固定 JSON 结构
 
 from openai import OpenAI
 
-from agent.config import *
+from config import *
 
 client = OpenAI(
     api_key=settings.api_key,

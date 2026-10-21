@@ -9,10 +9,6 @@ class LogAnalyzeRequest(BaseModel):
         description="待分析的错误日志"
     )
 
-# 批量请求
-class BatchLogAnalyzeRequest(BaseModel):
-    logs: list[LogAnalyzeRequest]
-
 class Evidence(BaseModel):
     log_fragment: str = Field(
         description="用于支持判断的关键日志片段"
@@ -58,5 +54,44 @@ class LogAnalyzeResponse(BaseModel):
     success: bool
     data: ErrorAnalysis | None = None
     message: str | None = None
+
+
+class ApiResponse(BaseModel):
+    success: bool
+    data: ErrorAnalysis | None = None
+    message: str
+    warnings: list[str] = []
+
+# 批量请求
+class BatchLogAnalyzeRequest(BaseModel):
+    logs: list[LogAnalyzeRequest]
+
+#批量接口
+class BatchItemResult(BaseModel):
+    success: bool
+    data: ErrorAnalysis | None = None
+    message: str | None = None
+
+class BatchLogAnalyzeResponse(BaseModel):
+    total: int
+    success_count: int
+    failure_count: int
+    results: list[BatchItemResult]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
