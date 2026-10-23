@@ -18,6 +18,7 @@ client = OpenAI(
 
 
 def analyze_log(log_text: str) -> ErrorAnalysis:
+    # raise RuntimeError("test error")
     user_prompt = USER_PROMPT_TEMPLATE.format(log_text=log_text)
     try:
         response = client.chat.completions.create(

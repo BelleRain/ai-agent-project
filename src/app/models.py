@@ -79,6 +79,15 @@ class BatchLogAnalyzeResponse(BaseModel):
     results: list[BatchItemResult]
 
 
+class ErrorResponse(BaseModel):
+    success: bool = False
+    error_code: str
+    message: str
+    request_id: str | None = None
+
+
+
+
 
 
 

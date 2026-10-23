@@ -7,6 +7,8 @@
 import argparse
 
 from app.services.log_service import *
+from app.services.prompt_eval import *
+
 
 def main():
     parser = argparse.ArgumentParser(
