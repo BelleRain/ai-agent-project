@@ -7,6 +7,7 @@ from config import settings
 from app.models import ErrorAnalysis
 from prompts import *
 from app.exceptions import LLMServiceError,StructuredOutputError
+from app.prompts import PROMPT_REGISTRY
 
 
 client = OpenAI(
@@ -16,21 +17,30 @@ client = OpenAI(
     max_retries=settings.max_retries,
 )
 
+def get_prompt_config() -> dict:
+    prompt_config = PROMPT_REGISTRY.get(settings.prompt_version)
+    if prompt_config is None:
+        raise ValueError(
+            f"不存在的 Prompt 版本：{settings.prompt_version}"
+        )
+    return prompt_config
+
 
 def analyze_log(log_text: str) -> ErrorAnalysis:
     # raise RuntimeError("test error")
-    user_prompt = USER_PROMPT_TEMPLATE.format(log_text=log_text)
+    #user_prompt = USER_PROMPT_TEMPLATE.format(log_text=log_text)
+    prompt_config = get_prompt_config()
     try:
         response = client.chat.completions.create(
             model = settings.model_name,
             messages=[
                 {
                     "role": "system",
-                    "content": SYSTEM_PROMPT
+                    "content": prompt_config["system"]
                 },
                 {
                   "role":"user",
-                  "content": user_prompt
+                  "content": prompt_config["user_template"].format(log_text=log_text)
                 },
             ],
             response_format={"type": "json_object"}
@@ -46,6 +56,7 @@ def analyze_log(log_text: str) -> ErrorAnalysis:
 
     try:
         data = json.loads(content)
+        data["prompt_version"] = settings.prompt_version
         return ErrorAnalysis.model_validate(data)
     # 非法JSON
     except json.JSONDecodeError as exc:

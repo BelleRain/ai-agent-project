@@ -40,6 +40,10 @@ class ErrorAnalysis(BaseModel):
         min_length=1,
         description="支撑判断的证据"
     )
+    prompt_version: str = Field(
+        default="",
+        description="提示词版本"
+    )
 
 # str | None：联合类型，表示字段可以是 str 类型或者 None，| 表示类型可以是多个候选类型之一。
 # = None 表示：如果没有给 message 传值，就默认使用 None。

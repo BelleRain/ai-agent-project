@@ -29,6 +29,8 @@ class Settings:
     # temperature = float(os.getenv("TEMPERATURE", "0"))
     # max_tokens = int(os.getenv("MAX_TOKENS", "800"))
 
+    prompt_version = os.getenv("PROMPT_VERSION", "v1")
+
 
 settings = Settings()
 
