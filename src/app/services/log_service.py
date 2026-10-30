@@ -17,19 +17,23 @@ client = OpenAI(
     max_retries=settings.max_retries,
 )
 
-def get_prompt_config() -> dict:
-    prompt_config = PROMPT_REGISTRY.get(settings.prompt_version)
+def get_prompt_config(prompt_version: str | None = None) -> dict:
+    version = prompt_version or settings.prompt_version
+    prompt_config = PROMPT_REGISTRY.get(version)
     if prompt_config is None:
         raise ValueError(
-            f"不存在的 Prompt 版本：{settings.prompt_version}"
+            f"不存在的 Prompt 版本：{version}"
         )
     return prompt_config
 
 
-def analyze_log(log_text: str) -> ErrorAnalysis:
+def analyze_log(
+        log_text: str,
+        prompt_version: str | None = None,
+) -> ErrorAnalysis:
     # raise RuntimeError("test error")
     #user_prompt = USER_PROMPT_TEMPLATE.format(log_text=log_text)
-    prompt_config = get_prompt_config()
+    prompt_config = get_prompt_config(prompt_version)
     try:
         response = client.chat.completions.create(
             model = settings.model_name,
@@ -56,7 +60,8 @@ def analyze_log(log_text: str) -> ErrorAnalysis:
 
     try:
         data = json.loads(content)
-        data["prompt_version"] = settings.prompt_version
+        version = prompt_version or settings.prompt_version
+        data["prompt_version"] = version
         return ErrorAnalysis.model_validate(data)
     # 非法JSON
     except json.JSONDecodeError as exc:
